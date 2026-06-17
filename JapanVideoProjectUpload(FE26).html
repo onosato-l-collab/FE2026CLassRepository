@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Video Project Hub</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: #0f0f0f;
+            padding-bottom: 60px;
+        }
+
+        /* Navbar Styling */
+        header {
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            position: sticky;
+            top: 0;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .logo {
+            color: #ff0000;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .logo span {
+            color: #0f0f0f;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Main Layout */
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Upload Form Card */
+        .upload-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+        }
+
+        .upload-section h2 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .form-group input {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group button {
+            background-color: #065fd4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .form-group button:hover {
+            background-color: #004cb0;
+        }
+
+        /* Video Grid & Feed */
+        .video-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .video-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-player-container {
+            background: #000;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            max-height: 500px;
+        }
+
+        .video-player-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .fallback-link-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .fallback-link-box a {
+            color: #3ea6ff;
+            font-size: 18px;
+            margin-top: 10px;
+            word-break: break-all;
+        }
+
+        .video-info {
+            padding: 20px;
+            border-bottom: 1px solid #e5e5e5;
+            position: relative;
+        }
+
+        .video-title {
+            font-size: 22px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            padding-right: 140px; /* Leave space for action buttons */
+        }
+
+        .video-meta {
+            font-size: 14px;
+            color: #606060;
+        }
+
+        /* Management Buttons */
+        .video-actions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .btn-edit {
+            background-color: #f2f2f2;
+            color: #0f0f0f;
+        }
+
+        .btn-edit:hover {
+            background-color: #e5e5e5;
+        }
+
+        .btn-delete {
+            background-color: #fff;
+            color: #cc0000;
+            border-color: #cc0000;
+        }
+
+        .btn-delete:hover {
+            background-color: #fff5f5;
+        }
+
+        /* Inline Edit Form Overlay Styling */
+        .edit-form-box {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #ccc;
+        }
+        .edit-form-box input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .edit-form-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            padding: 20px;
+            background: #fcfcfc;
+        }
+
+        .comments-count {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .comment-input-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .comment-input-box input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .comment-input-box .student-name {
+            width: 150px;
+        }
+
+        .comment-input-box .comment-text {
+            flex: 1;
+        }
+
+        .comment-input-box button {
+            background-color: #f2f2f2;
+            color: #0f0f0f;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .comment-input-box button:hover {
+            background-color: #e5e5e5;
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .comment-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .comment-author {
+            font-weight: 600;
+        }
+
+        .comment-content {
+            color: #212121;
+        }
+
+        .no-videos {
+            text-align: center;
+            color: #606060;
+            margin-top: 40px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header>
+        <a href="#" class="logo">🎥 <span>ClassTube Project Hub</span></a>
+    </header>
+
+    <div class="container">
+        
+        <!-- Upload Section -->
+        <section class="upload-section">
+            <h2>Upload Your Video Link</h2>
+            <div class="form-group">
+                <input type="text" id="studentName" placeholder="Your Name (e.g., Alex Smith)" required>
+                <input type="text" id="videoTitle" placeholder="Video Title" required>
+                <input type="url" id="videoUrl" placeholder="Paste Video Link (YouTube, Drive, etc.)" required>
+                <button onclick="uploadVideo()">Publish</button>
+            </div>
+        </section>
+
+        <!-- Video Feed -->
+        <main class="video-feed" id="videoFeed">
+            <!-- Videos dynamically render here -->
+        </main>
+    </div>
+
+    <script>
+        // Load existing data or initialize empty list
+        let projects = JSON.parse(localStorage.getItem('classProjects')) || [];
+        // Tracks which project index is currently being edited
+        let activeEditIndex = null; 
+
+        // Function to extract YouTube Embed ID if possible
+        function getEmbedSnippet(url) {
+            let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            let match = url.match(regExp);
+            
+            if (match && match[2].length == 11) {
+                return `<iframe src="https://www.youtube.com/embed/${match[2]}" allowfullscreen></iframe>`;
+            } else {
+                return `
+                    <div class="fallback-link-box">
+                        <p>External video link provided by student:</p>
+                        <a href="${url}" target="_blank" rel="noopener noreferrer">👉 Click here to watch video</a>
+                    </div>
+                `;
+            }
+        }
+
+        // Render function to display everything
+        function renderFeed() {
+            const feed = document.getElementById('videoFeed');
+            feed.innerHTML = '';
+
+            if (projects.length === 0) {
+                feed.innerHTML = '<p class="no-videos">No videos uploaded yet. Be the first!</p>';
+                return;
+            }
+
+            // Loop backwards to show the newest videos first
+            for (let i = projects.length - 1; i >= 0; i--) {
+                const project = projects[i];
+                
+                const card = document.createElement('div');
+                card.className = 'video-card';
+
+                // Build comments HTML string
+                let commentsHTML = '';
+                project.comments.forEach(c => {
+                    commentsHTML += `
+                        <div class="comment-item">
+                            <span class="comment-author">${escapeHTML(c.author)}</span>
+                            <span class="comment-content">${escapeHTML(c.text)}</span>
+                        </div>
+                    `;
+                });
+
+                // Check if this card is currently being edited
+                let editFormHTML = '';
+                if (activeEditIndex === i) {
+                    editFormHTML = `
+                        <div class="edit-form-box">
+                            <label style="font-size:12px; font-weight:bold;">Edit Video Details:</label>
+                            <input type="text" id="edit-title-${i}" value="${escapeHTML(project.title)}" placeholder="Edit Title">
+                            <input type="url" id="edit-url-${i}" value="${escapeHTML(project.url)}" placeholder="Edit Video Link">
+                            <div class="edit-form-actions">
+                                <button class="btn-action btn-edit" style="background:#065fd4; color:#fff;" onclick="saveEdit(${i})">Save Changes</button>
+                                <button class="btn-action btn-edit" onclick="cancelEdit()">Cancel</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="video-player-container">
+                        ${getEmbedSnippet(project.url)}
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">${escapeHTML(project.title)}</h3>
+                        <p class="video-meta">Uploaded by: <strong>${escapeHTML(project.student)}</strong></p>
+                        
+                        <!-- Management Actions -->
+                        <div class="video-actions">
+                            <button class="btn-action btn-edit" onclick="toggleEdit(${i})">Edit</button>
+                            <button class="btn-action btn-delete" onclick="deleteVideo(${i})">Delete</button>
+                        </div>
+
+                        ${editFormHTML}
+                    </div>
+                    <div class="comments-section">
+                        <div class="comments-count">${project.comments.length} Comment${project.comments.length === 1 ? '' : 's'}</div>
+                        
+                        <div class="comment-input-box">
+                            <input type="text" class="student-name" id="name-${i}" placeholder="Your Name" required>
+                            <input type="text" class="comment-text" id="text-${i}" placeholder="Add a public comment..." required>
+                            <button onclick="addComment(${i})">Comment</button>
+                        </div>
+
+                        <div class="comments-list">
+                            ${commentsHTML}
+                        </div>
+                    </div>
+                `;
+                feed.appendChild(card);
+            }
+        }
+
+        // Action: Upload a video
+        function uploadVideo() {
+            const nameInput = document.getElementById('studentName');
+            const titleInput = document.getElementById('videoTitle');
+            const urlInput = document.getElementById('videoUrl');
+
+            if (!nameInput.value || !titleInput.value || !urlInput.value) {
+                alert('Please fill out all fields before submitting.');
+                return;
+            }
+
+            const newProject = {
+                student: nameInput.value,
+                title: titleInput.value,
+                url: urlInput.value,
+                comments: []
+            };
+
+            projects.push(newProject);
+            localStorage.setItem('classProjects', JSON.stringify(projects));
+            
+            titleInput.value = '';
+            urlInput.value = '';
+            
+            renderFeed();
+        }
+
+        // Action: Open/Close inline editing window
+        function toggleEdit(index) {
+            activeEditIndex = (activeEditIndex === index) ? null : index;
+            renderFeed();
+        }
+
+        // Action: Cancel editing
+        function cancelEdit() {
+            activeEditIndex = null;
+            renderFeed();
+        }
+
+        // Action: Save edited details
+        function saveEdit(index) {
+            const updatedTitle = document.getElementById(`edit-title-${index}`).value;
+            const updatedUrl = document.getElementById(`edit-url-${index}`).value;
+
+            if (!updatedTitle || !updatedUrl) {
+                alert('Title and Video Link cannot be blank.');
+                return;
+            }
+
+            projects[index].title = updatedTitle;
+            projects[index].url = updatedUrl;
+
+            localStorage.setItem('classProjects', JSON.stringify(projects));
+            activeEditIndex = null; // close edit pane
+            renderFeed();
+        }
+
+        // Action: Delete a video upload
+        function deleteVideo(index) {
+            const confirmation = confirm(`Are you sure you want to delete "${projects[index].title}"? This will also delete all comments on it.`);
+            if (confirmation) {
+                projects.splice(index, 1); // Remove item from array
+                localStorage.setItem('classProjects', JSON.stringify(projects));
+                activeEditIndex = null; // clear edit panels if open
+                renderFeed();
+            }
+        }
+
+        // Action: Add a comment
+        function addComment(index) {
+            const authorInput = document.getElementById(`name-${index}`);
+            const textInput = document.getElementById(`text-${index}`);
+
+            if (!authorInput.value || !textInput.value) {
+                alert('Please enter your name and a comment.');
+                return;
+            }
+
+            projects[index].comments.push({
+                author: authorInput.value,
+                text: textInput.value
+            });
+
+            localStorage.setItem('classProjects', JSON.stringify(projects));
+            renderFeed();
+        }
+
+        // Helper to prevent script injection text errors
+        function escapeHTML(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // Initial render on load
+        renderFeed();
+    </script>
+</body>
+</html>
